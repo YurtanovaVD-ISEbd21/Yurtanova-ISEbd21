@@ -22,13 +22,15 @@ namespace AbstractDishShopView
         public static IUnityContainer BuildUnityContainer()
         {
             var currentContainer = new UnityContainer();
-            currentContainer.RegisterType<ISClientService, ClientServiceList>(new
+            currentContainer.RegisterType<ISClientService, SClientServiceList>(new
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<IMaterialsService, MaterialsServiceList>(new
  HierarchicalLifetimeManager());
             currentContainer.RegisterType<IDishService, DishServiceList>(new
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<IMainService, MainServiceList>(new
+           HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IStockService, StockServiceList>(new
            HierarchicalLifetimeManager());
             return currentContainer;
         }

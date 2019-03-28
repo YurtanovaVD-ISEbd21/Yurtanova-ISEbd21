@@ -5,8 +5,7 @@ using AbstractDishShopServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace AbstractDishShopServiceImplementList.Implementations
 {
@@ -19,46 +18,35 @@ namespace AbstractDishShopServiceImplementList.Implementations
         }
         public List<MaterialsViewModel> GetList()
         {
-            List<MaterialsViewModel> result = new List<MaterialsViewModel>();
-            for (int i = 0; i < source.Materialss.Count; ++i)
+            List<MaterialsViewModel> result = source.Materialss.Select(rec => new MaterialsViewModel
             {
-                result.Add(new MaterialsViewModel
-                {
-                    Id = source.Materialss[i].Id,
-                    MaterialsName = source.Materialss[i].MaterialsName
-                });
-            }
+                Id = rec.Id,
+                MaterialsName = rec.MaterialsName
+            })
+            .ToList();
             return result;
         }
         public MaterialsViewModel GetElement(int id)
         {
-            for (int i = 0; i < source.Materialss.Count; ++i)
+            Materials element = source.Materialss.FirstOrDefault(rec => rec.Id == id);
+            if (element != null)
             {
-                if (source.Materialss[i].Id == id)
+                return new MaterialsViewModel
                 {
-                    return new MaterialsViewModel
-                    {
-                        Id = source.Materialss[i].Id,
-                        MaterialsName = source.Materialss[i].MaterialsName
-                    };
-                }
+                    Id = element.Id,
+                    MaterialsName = element.MaterialsName
+                };
             }
             throw new Exception("Элемент не найден");
         }
         public void AddElement(MaterialsBindingModel model)
         {
-            int maxId = 0;
-            for (int i = 0; i < source.Materialss.Count; ++i)
+            Materials element = source.Materialss.FirstOrDefault(rec => rec.MaterialsName == model.MaterialsName);
+            if (element != null)
             {
-                if (source.Materialss[i].Id > maxId)
-                {
-                    maxId = source.Materialss[i].Id;
-                }
-                if (source.Materialss[i].MaterialsName == model.MaterialsName)
-                {
-                    throw new Exception("Уже есть компонент с таким названием");
-                }
+                throw new Exception("Уже есть компонент с таким названием");
             }
+            int maxId = source.Materialss.Count > 0 ? source.Materialss.Max(rec => rec.Id) : 0;
             source.Materialss.Add(new Materials
             {
                 Id = maxId + 1,
@@ -67,37 +55,30 @@ namespace AbstractDishShopServiceImplementList.Implementations
         }
         public void UpdElement(MaterialsBindingModel model)
         {
-            int index = -1;
-
-            for (int i = 0; i < source.Materialss.Count; ++i)
+            Materials element = source.Materialss.FirstOrDefault(rec => rec.MaterialsName == model.MaterialsName && rec.Id != model.Id);
+            if (element != null)
             {
-                if (source.Materialss[i].Id == model.Id)
-                {
-                    index = i;
-                }
-                if (source.Materialss[i].MaterialsName == model.MaterialsName &&
-                source.Materialss[i].Id != model.Id)
-                {
-                    throw new Exception("Уже есть компонент с таким названием");
-                }
+                throw new Exception("Уже есть компонент с таким названием");
             }
-            if (index == -1)
+            element = source.Materialss.FirstOrDefault(rec => rec.Id == model.Id);
+            if (element == null)
             {
                 throw new Exception("Элемент не найден");
+                
             }
-            source.Materialss[index].MaterialsName = model.MaterialsName;
+            element.MaterialsName = model.MaterialsName;
         }
         public void DelElement(int id)
         {
-            for (int i = 0; i < source.Materialss.Count; ++i)
+            Materials element = source.Materialss.FirstOrDefault(rec => rec.Id == id);
+            if (element != null)
             {
-                if (source.Materialss[i].Id == id)
-                {
-                    source.Materialss.RemoveAt(i);
-                    return;
-                }
+                source.Materialss.Remove(element);
             }
-            throw new Exception("Элемент не найден");
+            else
+            {
+                throw new Exception("Элемент не найден");
+            }
         }
     }
 }

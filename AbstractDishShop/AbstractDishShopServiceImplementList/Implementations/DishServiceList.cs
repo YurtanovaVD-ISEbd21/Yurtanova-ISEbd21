@@ -13,109 +13,67 @@ namespace AbstractDishShopServiceImplementList.Implementations
     public class DishServiceList : IDishService
     {
         private DataListSingleton source;
-
         public DishServiceList()
         {
             source = DataListSingleton.GetInstance();
         }
         public List<DishViewModel> GetList()
         {
-            List<DishViewModel> result = new List<DishViewModel>();
-            for (int i = 0; i < source.Dishs.Count; ++i)
+            List<DishViewModel> result = source.Dishs
+            .Select(rec => new DishViewModel
             {
-                // требуется дополнительно получить список компонентов для изделия и их  количество
-                List<DishMaterialsViewModel> DishMaterialss = new List<DishMaterialsViewModel>();
-                for (int j = 0; j < source.DishMaterialss.Count; ++j)
-                {
-                    if (source.DishMaterialss[j].DishId == source.Dishs[i].Id)
-                    {
-                        string materialsName = string.Empty;
-                        for (int k = 0; k < source.Materialss.Count; ++k)
-                        {
-                            if (source.DishMaterialss[j].MaterialsId ==
-                           source.Materialss[k].Id)
-                            {
-                                materialsName = source.Materialss[k].MaterialsName;
-                                break;
-                            }
-                        }
-                        DishMaterialss.Add(new DishMaterialsViewModel
-                        {
-                            Id = source.DishMaterialss[j].Id,
-                            DishId = source.DishMaterialss[j].DishId,
-                            MaterialsId = source.DishMaterialss[j].MaterialsId,
-                            MaterialsName = materialsName,
-                            Count = source.DishMaterialss[j].Count
-                        });
-                    }
-                }
-                result.Add(new DishViewModel
-                {
-                    Id = source.Dishs[i].Id,
-                    DishName = source.Dishs[i].DishName,
-                    Price = source.Dishs[i].Price,
-                    DishMaterials = DishMaterialss
-                });
-            }
-            return result;
+                Id = rec.Id,
+                DishName = rec.DishName,
+                Price = rec.Price,
+                DishMaterials = source.DishMaterialss
+            .Where(recPC => recPC.DishId == rec.Id)
+            .Select(recPC => new DishMaterialsViewModel
+            {
+                Id = recPC.Id,
+                DishId = recPC.DishId,
+                MaterialsId = recPC.MaterialsId,
+                MaterialsName = source.Materialss.FirstOrDefault(recC => recC.Id == recPC.MaterialsId)?.MaterialsName,
+                Count = recPC.Count
+            })
+            .ToList()
+            })
+            .ToList();
+            
+        return result;
         }
         public DishViewModel GetElement(int id)
         {
-            for (int i = 0; i < source.Dishs.Count; ++i)
+            Dish element = source.Dishs.FirstOrDefault(rec => rec.Id == id);
+            if (element != null)
             {
-                // требуется дополнительно получить список компонентов для изделия и их количество
-                List<DishMaterialsViewModel> DishMaterialss = new List<DishMaterialsViewModel>();
-                for (int j = 0; j < source.DishMaterialss.Count; ++j)
+                return new DishViewModel
                 {
-                    if (source.DishMaterialss[j].DishId == source.Dishs[i].Id)
-                    {
-                        string materialsName = string.Empty;
-                        for (int k = 0; k < source.Materialss.Count; ++k)
-                        {
-                            if (source.DishMaterialss[j].MaterialsId ==
-                           source.Materialss[k].Id)
-                            {
-                                materialsName = source.Materialss[k].MaterialsName;
-                                break;
-                            }
-                        }
-                        DishMaterialss.Add(new DishMaterialsViewModel
-                        {
-                            Id = source.DishMaterialss[j].Id,
-                            DishId = source.DishMaterialss[j].DishId,
-                            MaterialsId = source.DishMaterialss[j].MaterialsId,
-                            MaterialsName = materialsName,
-                            Count = source.DishMaterialss[j].Count
-                        });
-                    }
-                }
-                if (source.Dishs[i].Id == id)
+                    Id = element.Id,
+                    DishName = element.DishName,
+                    Price = element.Price,
+                   DishMaterials = source.DishMaterialss
+                .Where(recPC => recPC.DishId == element.Id)
+                .Select(recPC => new DishMaterialsViewModel
                 {
-                    return new DishViewModel
-                    {
-                        Id = source.Dishs[i].Id,
-                        DishName = source.Dishs[i].DishName,
-                        Price = source.Dishs[i].Price,
-                        DishMaterials = DishMaterialss
-                    };
-                }
+                    Id = recPC.Id,
+                    DishId = recPC.DishId,
+                    MaterialsId = recPC.MaterialsId,
+                    MaterialsName = source.Materialss.FirstOrDefault(recC => recC.Id == recPC.MaterialsId)?.MaterialsName,
+                    Count = recPC.Count
+                })
+                .ToList()
+                };
             }
             throw new Exception("Элемент не найден");
         }
         public void AddElement(DishBindingModel model)
         {
-            int maxId = 0;
-            for (int i = 0; i < source.Dishs.Count; ++i)
+            Dish element = source.Dishs.FirstOrDefault(rec => rec.DishName == model.DishName);
+            if (element != null)
             {
-                if (source.Dishs[i].Id > maxId)
-                {
-                    maxId = source.Dishs[i].Id;
-                }
-                if (source.Dishs[i].DishName == model.DishName)
-                {
-                    throw new Exception("Уже есть изделие с таким названием");
-                }
+                throw new Exception("Уже есть изделие с таким названием");
             }
+            int maxId = source.Dishs.Count > 0 ? source.Dishs.Max(rec => rec.Id) : 0;
             source.Dishs.Add(new Dish
             {
                 Id = maxId + 1,
@@ -123,146 +81,93 @@ namespace AbstractDishShopServiceImplementList.Implementations
                 Price = model.Price
             });
             // компоненты для изделия
-            int maxPCId = 0;
-            for (int i = 0; i < source.DishMaterialss.Count; ++i)
-            {
-                if (source.DishMaterialss[i].Id > maxPCId)
-                {
-                    maxPCId = source.DishMaterialss[i].Id;
-                }
-            }
+            int maxPCId = source.DishMaterialss.Count > 0 ? source.DishMaterialss.Max(rec => rec.Id) : 0;
             // убираем дубли по компонентам
-            for (int i = 0; i < model.DishMaterialss.Count; ++i)
+            var groupMaterialss = model.DishMaterialss
+            .GroupBy(rec => rec.MaterialsId)
+            .Select(rec => new
             {
-                for (int j = 1; j < model.DishMaterialss.Count; ++j)
-                {
-                    if (model.DishMaterialss[i].MaterialsId ==
-                    model.DishMaterialss[j].MaterialsId)
-                    {
-                        model.DishMaterialss[i].Count +=
-                        model.DishMaterialss[j].Count;
-                        model.DishMaterialss.RemoveAt(j--);
-                    }
-                }
-            }
+                MaterialsId = rec.Key,
+                Count = rec.Sum(r => r.Count)
+            });
             // добавляем компоненты
-            for (int i = 0; i < model.DishMaterialss.Count; ++i)
+            foreach (var groupMaterials in groupMaterialss)
             {
                 source.DishMaterialss.Add(new DishMaterials
                 {
                     Id = ++maxPCId,
                     DishId = maxId + 1,
-                    MaterialsId = model.DishMaterialss[i].MaterialsId,
-                    Count = model.DishMaterialss[i].Count
+                    
+                MaterialsId = groupMaterials.MaterialsId,
+                    Count = groupMaterials.Count
                 });
             }
         }
         public void UpdElement(DishBindingModel model)
         {
-            int index = -1;
-            for (int i = 0; i < source.Dishs.Count; ++i)
+            Dish element = source.Dishs.FirstOrDefault(rec => rec.DishName == model.DishName && rec.Id != model.Id);
+            if (element != null)
             {
-                if (source.Dishs[i].Id == model.Id)
-                {
-                    index = i;
-                }
-                if (source.Dishs[i].DishName == model.DishName &&
-                source.Dishs[i].Id != model.Id)
-                {
-                    throw new Exception("Уже есть Блюдо с таким названием");
-                }
+                throw new Exception("Уже есть изделие с таким названием");
             }
-            if (index == -1)
+            element = source.Dishs.FirstOrDefault(rec => rec.Id == model.Id);
+            if (element == null)
             {
                 throw new Exception("Элемент не найден");
             }
-            source.Dishs[index].DishName = model.DishName;
-            source.Dishs[index].Price = model.Price;
-            int maxPCId = 0;
-            for (int i = 0; i < source.DishMaterialss.Count; ++i)
-            {
-                if (source.DishMaterialss[i].Id > maxPCId)
-                {
-                    maxPCId = source.DishMaterialss[i].Id;
-                }
-            }
+            element.DishName = model.DishName;
+            element.Price = model.Price;
+            int maxPCId = source.DishMaterialss.Count > 0 ? source.DishMaterialss.Max(rec => rec.Id) : 0;
             // обновляем существуюущие компоненты
-            for (int i = 0; i < source.DishMaterialss.Count; ++i)
+            var compIds = model.DishMaterialss.Select(rec => rec.MaterialsId).Distinct();
+            var updateMaterialss = source.DishMaterialss.Where(rec => rec.DishId == model.Id && compIds.Contains(rec.MaterialsId));
+            foreach (var updateMaterials in updateMaterialss)
             {
-                if (source.DishMaterialss[i].DishId == model.Id)
-                {
-                    bool flag = true;
-                    for (int j = 0; j < model.DishMaterialss.Count; ++j)
-                    {
-                        // если встретили, то изменяем количество
-                        if (source.DishMaterialss[i].Id ==
-                       model.DishMaterialss[j].Id)
-                        {
-                            source.DishMaterialss[i].Count =
-                           model.DishMaterialss[j].Count;
-                            flag = false;
-                            break;
-                        }
-                    }
-                    // если не встретили, то удаляем
-                    if (flag)
-                    {
-                        source.DishMaterialss.RemoveAt(i--);
-                    }
-                }
+                updateMaterials.Count = model.DishMaterialss.FirstOrDefault(rec => rec.Id == updateMaterials.Id).Count;
             }
+            source.DishMaterialss.RemoveAll(rec => rec.DishId == model.Id && !compIds.Contains(rec.MaterialsId));
             // новые записи
-            for (int i = 0; i < model.DishMaterialss.Count; ++i)
+            var groupMaterialss = model.DishMaterialss
+            .Where(rec => rec.Id == 0)
+            .GroupBy(rec => rec.MaterialsId)
+            .Select(rec => new
             {
-                if (model.DishMaterialss[i].Id == 0)
+                MaterialsId = rec.Key,
+                Count = rec.Sum(r => r.Count)
+            });
+            foreach (var groupMaterials in groupMaterialss)
+            {
+                DishMaterials elementPC = source.DishMaterialss.FirstOrDefault(rec => rec.DishId == model.Id && rec.MaterialsId == groupMaterials.MaterialsId);
+                if (elementPC != null)
                 {
-                    // ищем дубли
-                    for (int j = 0; j < source.DishMaterialss.Count; ++j)
+                    elementPC.Count += groupMaterials.Count;
+                }
+                else
+                {
+                    source.DishMaterialss.Add(new DishMaterials
                     {
-                        if (source.DishMaterialss[j].DishId == model.Id &&
-                        source.DishMaterialss[j].MaterialsId ==
-                       model.DishMaterialss[i].MaterialsId)
-                        {
-                            source.DishMaterialss[j].Count +=
-                           model.DishMaterialss[i].Count;
-                            model.DishMaterialss[i].Id =
-                           source.DishMaterialss[j].Id;
-                            break;
-                        }
-                    }
-                    // если не нашли дубли, то новая запись
-                    if (model.DishMaterialss[i].Id == 0)
-                    {
-                        source.DishMaterialss.Add(new DishMaterials
-                        {
-                            Id = ++maxPCId,
-                            DishId = model.Id,
-                            MaterialsId = model.DishMaterialss[i].MaterialsId,
-                            Count = model.DishMaterialss[i].Count
-                        });
-                    }
+                        Id = ++maxPCId,
+                        DishId = model.Id,
+                        MaterialsId = groupMaterials.MaterialsId,
+                        Count = groupMaterials.Count
+                    });
                 }
             }
+          
         }
         public void DelElement(int id)
         {
-            // удаяем записи по компонентам при удалении изделия
-            for (int i = 0; i < source.DishMaterialss.Count; ++i)
+            Dish element = source.Dishs.FirstOrDefault(rec => rec.Id == id);
+            if (element != null)
             {
-                if (source.DishMaterialss[i].DishId == id)
-                {
-                    source.DishMaterialss.RemoveAt(i--);
-                }
+                // удаяем записи по компонентам при удалении изделия
+                source.DishMaterialss.RemoveAll(rec => rec.DishId == id);
+                source.Dishs.Remove(element);
             }
-            for (int i = 0; i < source.Dishs.Count; ++i)
+            else
             {
-                if (source.Dishs[i].Id == id)
-                {
-                    source.Dishs.RemoveAt(i);
-                    return;
-                }
+                throw new Exception("Элемент не найден");
             }
-            throw new Exception("Элемент не найден");
         }
     }
 }

@@ -46,16 +46,21 @@
     <Compile Include="BindingModels\MaterialsBindingModel.cs" />
     <Compile Include="BindingModels\SClientBindingModel.cs" />
     <Compile Include="BindingModels\SOrderBindingModel.cs" />
+    <Compile Include="BindingModels\StockBindingModel.cs" />
+    <Compile Include="BindingModels\StockMaterialsBindingModel.cs" />
     <Compile Include="Interfaces\IDishService.cs" />
     <Compile Include="Interfaces\IMainService.cs" />
     <Compile Include="Interfaces\IMaterialsService.cs" />
     <Compile Include="Interfaces\ISClientService.cs" />
+    <Compile Include="Interfaces\IStockService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\DishMaterialsViewModel.cs" />
     <Compile Include="ViewModel\DishViewModel.cs" />
     <Compile Include="ViewModel\MaterialsViewModel.cs" />
     <Compile Include="ViewModel\SClientViewModel.cs" />
     <Compile Include="ViewModel\SOrderViewModel.cs" />
+    <Compile Include="ViewModel\StockMaterialsViewModel.cs" />
+    <Compile Include="ViewModel\StockViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

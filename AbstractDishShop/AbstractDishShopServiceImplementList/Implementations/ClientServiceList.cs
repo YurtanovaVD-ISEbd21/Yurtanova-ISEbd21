@@ -10,57 +10,46 @@ using System.Threading.Tasks;
 
 namespace AbstractDishShopServiceImplementList.Implementations
 {
-    public class ClientServiceList : ISClientService
+    public class SClientServiceList : ISClientService
     {
         private DataListSingleton source;
-        public ClientServiceList()
+        public SClientServiceList()
         {
             source = DataListSingleton.GetInstance();
         }
         public List<SClientViewModel> GetList()
         {
-            List<SClientViewModel> result = new List<SClientViewModel>();
-            for (int i = 0; i < source.SClients.Count; ++i)
-            {
-                result.Add(new SClientViewModel
-                {
-                    Id = source.SClients[i].Id,
-                    SClientFIO = source.SClients[i].SClientFIO
-                });
-            }
-
+            
+        List<SClientViewModel> result = source.Clients.Select(rec => new SClientViewModel
+        {
+            Id = rec.Id,
+            SClientFIO = rec.SClientFIO
+        })
+        .ToList();
             return result;
         }
         public SClientViewModel GetElement(int id)
         {
-            for (int i = 0; i < source.SClients.Count; ++i)
+            SClient element = source.Clients.FirstOrDefault(rec => rec.Id == id);
+            if (element != null)
             {
-                if (source.SClients[i].Id == id)
+                return new SClientViewModel
                 {
-                    return new SClientViewModel
-                    {
-                        Id = source.SClients[i].Id,
-                        SClientFIO = source.SClients[i].SClientFIO
-                    };
-                }
+                    Id = element.Id,
+                    SClientFIO = element.SClientFIO
+                };
             }
             throw new Exception("Элемент не найден");
         }
         public void AddElement(SClientBindingModel model)
         {
-            int maxId = 0;
-            for (int i = 0; i < source.SClients.Count; ++i)
+            SClient element = source.Clients.FirstOrDefault(rec => rec.SClientFIO == model.SClientFIO);
+            if (element != null)
             {
-                if (source.SClients[i].Id > maxId)
-                {
-                    maxId = source.SClients[i].Id;
-                }
-                if (source.SClients[i].SClientFIO == model.SClientFIO)
-                {
-                    throw new Exception("Уже есть клиент с таким ФИО");
-                }
+                throw new Exception("Уже есть клиент с таким ФИО");
             }
-            source.SClients.Add(new SClient
+            int maxId = source.Clients.Count > 0 ? source.Clients.Max(rec => rec.Id) : 0;
+            source.Clients.Add(new SClient
             {
                 Id = maxId + 1,
                 SClientFIO = model.SClientFIO
@@ -68,37 +57,30 @@ namespace AbstractDishShopServiceImplementList.Implementations
         }
         public void UpdElement(SClientBindingModel model)
         {
-            int index = -1;
-            for (int i = 0; i < source.SClients.Count; ++i)
+            SClient element = source.Clients.FirstOrDefault(rec => rec.SClientFIO == model.SClientFIO && rec.Id != model.Id);
+            if (element != null)
             {
-                if (source.SClients[i].Id == model.Id)
-                {
-                    index = i;
-                }
-                if (source.SClients[i].SClientFIO == model.SClientFIO &&
-                source.SClients[i].Id != model.Id)
-                {
-                    throw new Exception("Уже есть клиент с таким ФИО");
-                }
+                throw new Exception("Уже есть клиент с таким ФИО");
             }
-            if (index == -1)
+            element = source.Clients.FirstOrDefault(rec => rec.Id == model.Id);
+            if (element == null)
             {
                 throw new Exception("Элемент не найден");
             }
-            source.SClients[index].SClientFIO = model.SClientFIO;
+            element.SClientFIO = model.SClientFIO;
         }
         public void DelElement(int id)
         {
-            for (int i = 0; i < source.SClients.Count; ++i)
-
+            SClient element = source.Clients.FirstOrDefault(rec => rec.Id == id);
+            if (element != null)
             {
-                if (source.SClients[i].Id == id)
-                {
-                    source.SClients.RemoveAt(i);
-                    return;
-                }
+                source.Clients.Remove(element);
             }
-            throw new Exception("Элемент не найден");
+            else
+               
+        {
+                throw new Exception("Элемент не найден");
+            }
         }
     }
 }

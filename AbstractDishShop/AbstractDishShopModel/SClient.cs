@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +14,10 @@ namespace AbstractDishShopModel
     public class SClient
     {
         public int Id { get; set; }
+        [Required]
         public string SClientFIO { get; set; }
+        [ForeignKey("SClientId")]
+        public virtual List<SOrder> SOrders { get; set; }
     }
 }
 

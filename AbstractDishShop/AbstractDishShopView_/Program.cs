@@ -1,6 +1,9 @@
 ﻿using AbstractDishShopServiceDAL.Interfaces;
+using AbstractDishShopServiceImplementDataBase;
+using AbstractDishShopServiceImplementDataBase.Implementations;
 using AbstractDishShopServiceImplementList.Implementations;
 using System;
+using System.Data.Entity;
 using System.Windows.Forms;
 using Unity;
 using Unity.Lifetime;
@@ -8,9 +11,10 @@ using Unity.Lifetime;
 namespace AbstractDishShopView
 {
     static class Program
-    {/// <summary>
-     /// Главная точка входа для приложения.
-     /// </summary>
+    {
+        /// <summary>
+        /// Главная точка входа для приложения.
+        /// </summary>
         [STAThread]
         static void Main()
         {
@@ -22,16 +26,12 @@ namespace AbstractDishShopView
         public static IUnityContainer BuildUnityContainer()
         {
             var currentContainer = new UnityContainer();
-            currentContainer.RegisterType<ISClientService, SClientServiceList>(new
-           HierarchicalLifetimeManager());
-            currentContainer.RegisterType<IMaterialsService, MaterialsServiceList>(new
- HierarchicalLifetimeManager());
-            currentContainer.RegisterType<IDishService, DishServiceList>(new
-           HierarchicalLifetimeManager());
-            currentContainer.RegisterType<IMainService, MainServiceList>(new
-           HierarchicalLifetimeManager());
-            currentContainer.RegisterType<IStockService, StockServiceList>(new
-           HierarchicalLifetimeManager());
+            currentContainer.RegisterType<DbContext, AbstractDbContext>(new HierarchicalLifetimeManager());
+            currentContainer.RegisterType<ISClientService, SClientServiceDB>(new HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IMaterialsService, MaterialsServiceBD>(new HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IDishService, DishServiceDB>(new HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IStockService, StockServiceBD>(new HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IMainService, MainServiceDB>(new HierarchicalLifetimeManager());
             return currentContainer;
         }
     }

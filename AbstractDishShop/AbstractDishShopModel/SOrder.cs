@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace AbstractDishShopModel
-{
-    /// <summary>
-    /// Заказ клиента
-    /// </summary>
+{/// <summary>
+ /// Заказ клиента
+ /// </summary>
     public class SOrder
     {
         public int Id { get; set; }
@@ -19,5 +18,7 @@ namespace AbstractDishShopModel
         public SOrderStatus Status { get; set; }
         public DateTime DateCreate { get; set; }
         public DateTime? DateImplement { get; set; }
+        public virtual SClient SClient { get; set; }
+        public virtual Dish Dish { get; set; }
     }
 }

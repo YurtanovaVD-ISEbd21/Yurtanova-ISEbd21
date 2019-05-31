@@ -67,7 +67,7 @@ namespace AbstractDishShopView
                     int id = Convert.ToInt32(comboBoxDish.SelectedValue);
                     DishViewModel product = serviceP.GetElement(id);
                     int count = Convert.ToInt32(textBoxCount.Text);
-                    textBoxSum.Text = (count * product.Price).ToString();
+                    textBoxSum.Text = (Convert.ToInt32(count * product.Price)).ToString();
                 }
                 catch (Exception ex)
                 {

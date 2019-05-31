@@ -1,7 +1,6 @@
 ﻿using AbstractDishShopServiceDAL.Interfaces;
 using AbstractDishShopServiceImplementDataBase;
 using AbstractDishShopServiceImplementDataBase.Implementations;
-using AbstractDishShopServiceImplementList.Implementations;
 using System;
 using System.Data.Entity;
 using System.Windows.Forms;
@@ -32,6 +31,7 @@ namespace AbstractDishShopView
             currentContainer.RegisterType<IDishService, DishServiceDB>(new HierarchicalLifetimeManager());
             currentContainer.RegisterType<IStockService, StockServiceBD>(new HierarchicalLifetimeManager());
             currentContainer.RegisterType<IMainService, MainServiceDB>(new HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IReportService, ReportServiceDB>(new HierarchicalLifetimeManager());
             return currentContainer;
         }
     }

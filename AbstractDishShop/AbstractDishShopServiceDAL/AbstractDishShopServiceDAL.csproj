@@ -44,10 +44,13 @@
     <Compile Include="BindingModels\DishBindingModel.cs" />
     <Compile Include="BindingModels\DishMaterialsBindingModel.cs" />
     <Compile Include="BindingModels\MaterialsBindingModel.cs" />
+    <Compile Include="BindingModels\ReportBindingModel.cs" />
     <Compile Include="BindingModels\SClientBindingModel.cs" />
+    <Compile Include="BindingModels\SClientSOrdersModel.cs" />
     <Compile Include="BindingModels\SOrderBindingModel.cs" />
     <Compile Include="BindingModels\StockBindingModel.cs" />
     <Compile Include="BindingModels\StockMaterialsBindingModel.cs" />
+    <Compile Include="BindingModels\StocksLoadViewModel.cs" />
     <Compile Include="Interfaces\IDishService.cs" />
     <Compile Include="Interfaces\IMainService.cs" />
     <Compile Include="Interfaces\IMaterialsService.cs" />

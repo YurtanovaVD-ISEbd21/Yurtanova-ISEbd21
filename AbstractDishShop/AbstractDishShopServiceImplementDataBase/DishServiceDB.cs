@@ -48,6 +48,7 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
                 return new DishViewModel
                 {
                     Id = element.Id,
+                    Price = element.Price,
                     DishName = element.DishName,
                     DishMaterials = context.DishMaterialss
                             .Where(recPC => recPC.DishId == element.Id)

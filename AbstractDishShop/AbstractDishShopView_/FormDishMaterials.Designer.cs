@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.comboBoxMaterial = new System.Windows.Forms.ComboBox();
+            this.comboBoxDishMaterials = new System.Windows.Forms.ComboBox();
             this.materialsBindingModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.textBoxCount = new System.Windows.Forms.TextBox();
             this.buttonSave = new System.Windows.Forms.Button();
@@ -44,9 +44,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(3, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 13);
+            this.label1.Size = new System.Drawing.Size(57, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Компонент";
+            this.label1.Text = "Материал";
             // 
             // label2
             // 
@@ -57,16 +57,16 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Количество";
             // 
-            // comboBoxMaterial
+            // comboBoxDishMaterials
             // 
-            this.comboBoxMaterial.DataSource = this.materialsBindingModelBindingSource;
-            this.comboBoxMaterial.DisplayMember = "MaterialsName";
-            this.comboBoxMaterial.FormattingEnabled = true;
-            this.comboBoxMaterial.Location = new System.Drawing.Point(88, 10);
-            this.comboBoxMaterial.Name = "comboBoxMaterial";
-            this.comboBoxMaterial.Size = new System.Drawing.Size(156, 21);
-            this.comboBoxMaterial.TabIndex = 2;
-            this.comboBoxMaterial.Click += new System.EventHandler(this.FormDishMaterials_Load);
+            this.comboBoxDishMaterials.DataSource = this.materialsBindingModelBindingSource;
+            this.comboBoxDishMaterials.DisplayMember = "MaterialsName";
+            this.comboBoxDishMaterials.FormattingEnabled = true;
+            this.comboBoxDishMaterials.Location = new System.Drawing.Point(88, 10);
+            this.comboBoxDishMaterials.Name = "comboBoxDishMaterials";
+            this.comboBoxDishMaterials.Size = new System.Drawing.Size(156, 21);
+            this.comboBoxDishMaterials.TabIndex = 2;
+            this.comboBoxDishMaterials.Click += new System.EventHandler(this.FormDishMaterials_Load);
             // 
             // materialsBindingModelBindingSource
             // 
@@ -107,11 +107,11 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.textBoxCount);
-            this.Controls.Add(this.comboBoxMaterial);
+            this.Controls.Add(this.comboBoxDishMaterials);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "FormDishMaterials";
-            this.Text = "Компоненты блюда";
+            this.Text = "Материал подарка";
             this.Load += new System.EventHandler(this.FormDishMaterials_Load);
             ((System.ComponentModel.ISupportInitialize)(this.materialsBindingModelBindingSource)).EndInit();
             this.ResumeLayout(false);
@@ -123,7 +123,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox comboBoxMaterial;
+        private System.Windows.Forms.ComboBox comboBoxDishMaterials;
         private System.Windows.Forms.TextBox textBoxCount;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonCancel;

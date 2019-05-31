@@ -1,31 +1,20 @@
 ﻿using AbstractDishShopServiceDAL.BindingModels;
-using AbstractDishShopServiceDAL.Interfaces;
 using AbstractDishShopServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
+
 
 namespace AbstractDishShopView
 {
     public partial class FormDish : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
         public int Id { set { id = value; } }
-        private readonly IDishService service;
         private int? id;
-        private List<DishMaterialsViewModel> DishMaterials;
-        public FormDish(IDishService service)
+        private List<DishMaterialsViewModel> DishMaterialss;
+        public FormDish()
         {
             InitializeComponent();
-            this.service = service;
         }
         private void FormDish_Load(object sender, EventArgs e)
         {
@@ -33,34 +22,33 @@ namespace AbstractDishShopView
             {
                 try
                 {
-                    DishViewModel view = service.GetElement(id.Value);
+                    DishViewModel view = APIClient.GetRequest<DishViewModel>("api/Dish/Get/" + id.Value);
                     if (view != null)
                     {
                         textBoxName.Text = view.DishName;
                         textBoxPrice.Text = view.Price.ToString();
-                        DishMaterials = view.DishMaterials;
+                        DishMaterialss = view.DishMaterials;
                         LoadData();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                DishMaterials = new List<DishMaterialsViewModel>();
+                DishMaterialss = new List<DishMaterialsViewModel>();
             }
         }
         private void LoadData()
         {
             try
             {
-                if (DishMaterials != null)
+                if (DishMaterialss != null)
                 {
                     dataGridView.DataSource = null;
-                    dataGridView.DataSource = DishMaterials;
+                    dataGridView.DataSource = DishMaterialss;
                     dataGridView.Columns[0].Visible = false;
                     dataGridView.Columns[1].Visible = false;
                     dataGridView.Columns[2].Visible = false;
@@ -70,13 +58,12 @@ namespace AbstractDishShopView
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            var form = Container.Resolve<FormDishMaterials>();
+            var form = new FormDishMaterials();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 if (form.Model != null)
@@ -85,7 +72,7 @@ namespace AbstractDishShopView
                     {
                         form.Model.DishId = id.Value;
                     }
-                    DishMaterials.Add(form.Model);
+                    DishMaterialss.Add(form.Model);
                 }
                 LoadData();
             }
@@ -94,13 +81,11 @@ namespace AbstractDishShopView
         {
             if (dataGridView.SelectedRows.Count == 1)
             {
-                var form = Container.Resolve<FormDishMaterials>();
-                form.Model =
-               DishMaterials[dataGridView.SelectedRows[0].Cells[0].RowIndex];
+                var form = new FormDishMaterials();
+                form.Model = DishMaterialss[dataGridView.SelectedRows[0].Cells[0].RowIndex];
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    DishMaterials[dataGridView.SelectedRows[0].Cells[0].RowIndex] =
-                   form.Model;
+                    DishMaterialss[dataGridView.SelectedRows[0].Cells[0].RowIndex] = form.Model;
                     LoadData();
                 }
             }
@@ -109,18 +94,15 @@ namespace AbstractDishShopView
         {
             if (dataGridView.SelectedRows.Count == 1)
             {
-                if (MessageBox.Show("Удалить запись", "Вопрос", MessageBoxButtons.YesNo,
-               MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Удалить запись", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     try
                     {
-
-                        DishMaterials.RemoveAt(dataGridView.SelectedRows[0].Cells[0].RowIndex);
+                        DishMaterialss.RemoveAt(dataGridView.SelectedRows[0].Cells[0].RowIndex);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                        MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     LoadData();
                 }
@@ -134,64 +116,58 @@ namespace AbstractDishShopView
         {
             if (string.IsNullOrEmpty(textBoxName.Text))
             {
-                MessageBox.Show("Заполните название", "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show("Заполните название", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (string.IsNullOrEmpty(textBoxPrice.Text))
             {
-                MessageBox.Show("Заполните цену", "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show("Заполните цену", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (DishMaterials == null || DishMaterials.Count == 0)
+            if (DishMaterialss == null || DishMaterialss.Count == 0)
             {
-                MessageBox.Show("Заполните компоненты", "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show("Заполните материалы", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             try
             {
-                List<DishMaterialsBindingModel> DishMateialsBM = new
-               List<DishMaterialsBindingModel>();
-                for (int i = 0; i < DishMaterials.Count; ++i)
+                List<DishMaterialsBindingModel> productComponentBM = new List<DishMaterialsBindingModel>();
+                for (int i = 0; i < DishMaterialss.Count; ++i)
                 {
-                    DishMateialsBM.Add(new DishMaterialsBindingModel
+                    productComponentBM.Add(new DishMaterialsBindingModel
                     {
-                        Id = DishMaterials[i].Id,
-                        DishId = DishMaterials[i].DishId,
-                        MaterialsId = DishMaterials[i].MaterialsId,
-                        Count = DishMaterials[i].Count
+                        Id = DishMaterialss[i].Id,
+                        DishId = DishMaterialss[i].DishId,
+                        MaterialsId = DishMaterialss[i].MaterialsId,
+                        Count = DishMaterialss[i].Count
                     });
                 }
                 if (id.HasValue)
                 {
-                    service.UpdElement(new DishBindingModel
+                    APIClient.PostRequest<DishBindingModel, bool>("api/Dish/UpdElement", new DishBindingModel
                     {
                         Id = id.Value,
                         DishName = textBoxName.Text,
                         Price = Convert.ToInt32(textBoxPrice.Text),
-                        DishMaterialss = DishMateialsBM
+                        DishMaterialss = productComponentBM
                     });
                 }
                 else
                 {
-                    service.AddElement(new DishBindingModel
+                    APIClient.PostRequest<DishBindingModel, bool>("api/Dish/AddElement", new DishBindingModel
                     {
                         DishName = textBoxName.Text,
                         Price = Convert.ToInt32(textBoxPrice.Text),
-                        DishMaterialss = DishMateialsBM
+                        DishMaterialss = productComponentBM
                     });
                 }
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение",
-               MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void buttonCancel_Click(object sender, EventArgs e)

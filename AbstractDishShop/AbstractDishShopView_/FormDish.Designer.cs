@@ -171,7 +171,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "FormDish";
-            this.Text = "Изделие";
+            this.Text = "Блюдо";
             this.Load += new System.EventHandler(this.FormDish_Load);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();

@@ -1,32 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using AbstractDishShopServiceDAL.Interfaces;
 using AbstractDishShopServiceDAL.BindingModels;
 using AbstractDishShopServiceDAL.ViewModel;
+using AbstractDishShopView;
 
 namespace AbstractDishShopView_
 {
     public partial class FormPutOnStock : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-        private readonly IStockService serviceS;
-        private readonly IMaterialsService serviceC;
-        private readonly IMainService serviceM;
-        public FormPutOnStock(IStockService serviceS, IMaterialsService serviceC, IMainService serviceM)
+        public FormPutOnStock()
         {
             InitializeComponent();
-            this.serviceS = serviceS;
-            this.serviceC = serviceC;
-            this.serviceM = serviceM;
         }
+
         private void FormPutOnStock_Load(object sender, EventArgs e)
         {
             try
             {
-                List<MaterialsViewModel> listC = serviceC.GetList();
+                List<MaterialsViewModel> listC = APIClient.GetRequest<List<MaterialsViewModel>>("api/Materials/GetList");
                 if (listC != null)
                 {
                     comboBoxMaterials.DisplayMember = "MaterialsName";
@@ -34,14 +26,13 @@ namespace AbstractDishShopView_
                     comboBoxMaterials.DataSource = listC;
                     comboBoxMaterials.SelectedItem = null;
                 }
-                List<StockViewModel> listS = serviceS.GetList();
+                List<StockViewModel> listS = APIClient.GetRequest<List<StockViewModel>>("api/Stock/GetList");
                 if (listS != null)
                 {
-                    
-                comboBoxStock.DisplayMember = "StockName";
-                    comboBoxStock.ValueMember = "Id";
-                    comboBoxStock.DataSource = listS;
-                    comboBoxStock.SelectedItem = null;
+                    comboBoxStocks.DisplayMember = "StockName";
+                    comboBoxStocks.ValueMember = "Id";
+                    comboBoxStocks.DataSource = listS;
+                    comboBoxStocks.SelectedItem = null;
                 }
             }
             catch (Exception ex)
@@ -49,6 +40,7 @@ namespace AbstractDishShopView_
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void buttonSave_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBoxCount.Text))
@@ -58,20 +50,20 @@ namespace AbstractDishShopView_
             }
             if (comboBoxMaterials.SelectedValue == null)
             {
-                MessageBox.Show("Выберите компонент", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Выберите материалы", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (comboBoxStock.SelectedValue == null)
+            if (comboBoxMaterials.SelectedValue == null)
             {
                 MessageBox.Show("Выберите склад", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             try
             {
-                serviceM.PutMaterialsOnStock(new StockMaterialsBindingModel
+                APIClient.PostRequest<StockMaterialsBindingModel, bool>("api/SMain/PutMaterialsOnStock", new StockMaterialsBindingModel
                 {
                     MaterialsId = Convert.ToInt32(comboBoxMaterials.SelectedValue),
-                    StockId = Convert.ToInt32(comboBoxStock.SelectedValue),
+                    StockId = Convert.ToInt32(comboBoxStocks.SelectedValue),
                     Count = Convert.ToInt32(textBoxCount.Text)
                 });
                 MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -83,10 +75,12 @@ namespace AbstractDishShopView_
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
     }
 }

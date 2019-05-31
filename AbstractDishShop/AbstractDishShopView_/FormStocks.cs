@@ -1,30 +1,17 @@
-﻿using AbstractDishShopServiceDAL.Interfaces;
+﻿using AbstractDishShopServiceDAL.BindingModels;
 using AbstractDishShopServiceDAL.ViewModel;
+using AbstractDishShopView;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
 
 namespace AbstractDishShopView_
 {
     public partial class FormStocks : Form
     {
-        
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
-        private readonly IStockService service;
-
-        public FormStocks(IStockService service)
+        public FormStocks()
         {
             InitializeComponent();
-            this.service = service;
         }
 
         private void FormStocks_Load(object sender, EventArgs e)
@@ -36,12 +23,13 @@ namespace AbstractDishShopView_
         {
             try
             {
-                List<StockViewModel> list = service.GetList();
+                List<StockViewModel> list = APIClient.GetRequest<List<StockViewModel>>("api/Stock/GetList");
                 if (list != null)
                 {
                     dataGridView.DataSource = list;
                     dataGridView.Columns[0].Visible = false;
-                    dataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView.Columns[1].AutoSizeMode =
+                    DataGridViewAutoSizeColumnMode.Fill;
                 }
             }
             catch (Exception ex)
@@ -52,7 +40,7 @@ namespace AbstractDishShopView_
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            var form = Container.Resolve<FormStock>();
+            var form = new AbstractDishShopView_.FormStock();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 LoadData();
@@ -63,7 +51,7 @@ namespace AbstractDishShopView_
         {
             if (dataGridView.SelectedRows.Count == 1)
             {
-                var form = Container.Resolve<FormStock>();
+                var form = new AbstractDishShopView_.FormStock();
                 form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
@@ -78,10 +66,11 @@ namespace AbstractDishShopView_
             {
                 if (MessageBox.Show("Удалить запись", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+                    int id =
+                        Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                     try
                     {
-                        service.DelElement(id);
+                        APIClient.PostRequest<StockBindingModel, bool>("api/Stock/DelElement", new StockBindingModel { Id = id });
                     }
                     catch (Exception ex)
                     {

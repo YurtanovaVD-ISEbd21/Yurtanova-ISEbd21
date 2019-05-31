@@ -12,5 +12,7 @@ namespace AbstractDishShopModel
         public int StockId { get; set; }
         public int MaterialsId { get; set; }
         public int Count { get; set; }
+        public virtual Stock Stock { get; set; }
+        public virtual Materials Materials { get; set; }
     }
 }

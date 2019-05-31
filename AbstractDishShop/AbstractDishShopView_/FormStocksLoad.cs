@@ -1,30 +1,22 @@
 ﻿using System.Windows.Forms;
-using Unity;
-using AbstractDishShopServiceDAL.Interfaces;
+using System.Collections.Generic;
 using System;
 using AbstractDishShopServiceDAL.BindingModels;
+using AbstractDishShopView;
 
 namespace AbstractDishShopView_
 {
     public partial class FormStocksLoad : Form
     {
-        
-    [Dependency]
-        public new IUnityContainer Container { get; set; }
-
-        private readonly IReportService service;
-
-        public FormStocksLoad(IReportService service)
+        public FormStocksLoad()
         {
             InitializeComponent();
-            this.service = service;
         }
-
-        private void FormStoragesLoad_Load(object sender, EventArgs e)
+        private void FormStocksLoad_Load(object sender, EventArgs e)
         {
             try
             {
-                var dict = service.GetStocksLoad();
+                var dict = APIClient.GetRequest<List<StocksLoadViewModel>>("api/SReport/GetStocksLoad");
                 if (dict != null)
                 {
                     dataGridView.Rows.Clear();
@@ -45,7 +37,6 @@ namespace AbstractDishShopView_
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void buttonSaveToExcel_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog
@@ -56,7 +47,7 @@ namespace AbstractDishShopView_
             {
                 try
                 {
-                    service.SaveStocksLoad(new ReportBindingModel
+                    APIClient.PostRequest<ReportBindingModel, bool>("api/SReport/SaveStocksLoad", new ReportBindingModel
                     {
                         FileName = sfd.FileName
                     });

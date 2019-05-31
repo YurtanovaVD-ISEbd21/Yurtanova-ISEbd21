@@ -1,60 +1,43 @@
-﻿using AbstractDishShopServiceDAL.Interfaces;
-using AbstractDishShopServiceDAL.ViewModel;
+﻿using AbstractDishShopServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
 
 namespace AbstractDishShopView
 {
     public partial class FormDishMaterials : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
         public DishMaterialsViewModel Model
         {
             set { model = value; }
-            get
-            {
-                return
-model;
-            }
+            get { return model; }
         }
-        private readonly IMaterialsService service;
         private DishMaterialsViewModel model;
-        public FormDishMaterials(IMaterialsService service)
+        public FormDishMaterials()
         {
             InitializeComponent();
-            this.service = service;
         }
         private void FormDishMaterials_Load(object sender, EventArgs e)
         {
             try
             {
-                List<MaterialsViewModel> list = service.GetList();
+                List<MaterialsViewModel> list = APIClient.GetRequest<List<MaterialsViewModel>>("api/Materials/GetList");
                 if (list != null)
                 {
-                    comboBoxMaterial.DisplayMember = "MaterialsName";
-                    comboBoxMaterial.ValueMember = "Id";
-                    comboBoxMaterial.DataSource = list;
-                    comboBoxMaterial.SelectedItem = null;
+                    comboBoxDishMaterials.DisplayMember = "MaterialsName";
+                    comboBoxDishMaterials.ValueMember = "Id";
+                    comboBoxDishMaterials.DataSource = list;
+                    comboBoxDishMaterials.SelectedItem = null;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             if (model != null)
             {
-                comboBoxMaterial.Enabled = false;
-                comboBoxMaterial.SelectedValue = model.MaterialsId;
+                comboBoxDishMaterials.Enabled = false;
+                comboBoxDishMaterials.SelectedValue = model.MaterialsId;
                 textBoxCount.Text = model.Count.ToString();
             }
         }
@@ -62,14 +45,12 @@ model;
         {
             if (string.IsNullOrEmpty(textBoxCount.Text))
             {
-                MessageBox.Show("Заполните поле Количество", "Ошибка",
-               MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Заполните поле Количество", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (comboBoxMaterial.SelectedValue == null)
+            if (comboBoxDishMaterials.SelectedValue == null)
             {
-                MessageBox.Show("Выберите компонент", "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show("Выберите компонент", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             try
@@ -78,8 +59,8 @@ model;
                 {
                     model = new DishMaterialsViewModel
                     {
-                        MaterialsId = Convert.ToInt32(comboBoxMaterial.SelectedValue),
-                        MaterialsName = comboBoxMaterial.Text,
+                        MaterialsId = Convert.ToInt32(comboBoxDishMaterials.SelectedValue),
+                        MaterialsName = comboBoxDishMaterials.Text,
                         Count = Convert.ToInt32(textBoxCount.Text)
                     };
                 }
@@ -87,15 +68,13 @@ model;
                 {
                     model.Count = Convert.ToInt32(textBoxCount.Text);
                 }
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение",
-               MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void buttonCancel_Click(object sender, EventArgs e)

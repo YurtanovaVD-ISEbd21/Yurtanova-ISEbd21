@@ -1,21 +1,17 @@
-﻿using AbstractDishShopServiceDAL.Interfaces;
+﻿using AbstractDishShopServiceDAL.BindingModels;
 using AbstractDishShopServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
+
 
 namespace AbstractDishShopView
 {
     public partial class FormClients : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set;}
-        private readonly ISClientService service;
-        public FormClients(ISClientService service)
+        public FormClients()
         {
             InitializeComponent();
-            this.service = service;
         }
         private void FormClients_Load(object sender, EventArgs e)
         {
@@ -25,24 +21,23 @@ namespace AbstractDishShopView
         {
             try
             {
-                List<SClientViewModel> list = service.GetList();
+                List<SClientViewModel> list = APIClient.GetRequest<List<SClientViewModel>>("api/SClient/GetList");
                 if (list != null)
                 {
-                    dataGridView.DataSource = list;
-                    dataGridView.Columns[0].Visible = false;
-                    dataGridView.Columns[1].AutoSizeMode =
+                    dataGridViewClients.DataSource = list;
+                    dataGridViewClients.Columns[0].Visible = false;
+                    dataGridViewClients.Columns[1].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.Fill;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            var form = Container.Resolve<FormClient>();
+            var form = new FormClient();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 LoadData();
@@ -50,10 +45,10 @@ namespace AbstractDishShopView
         }
         private void buttonUpd_Click(object sender, EventArgs e)
         {
-            if (dataGridView.SelectedRows.Count == 1)
+            if (dataGridViewClients.SelectedRows.Count == 1)
             {
-                var form = Container.Resolve<FormClient>();
-                form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+                var form = new FormClient();
+                form.Id = Convert.ToInt32(dataGridViewClients.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     LoadData();
@@ -62,21 +57,18 @@ namespace AbstractDishShopView
         }
         private void buttonDel_Click(object sender, EventArgs e)
         {
-            if (dataGridView.SelectedRows.Count == 1)
+            if (dataGridViewClients.SelectedRows.Count == 1)
             {
-                if (MessageBox.Show("Удалить запись", "Вопрос", MessageBoxButtons.YesNo,
-               MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Удалить запись", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    int id =
-                   Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+                    int id = Convert.ToInt32(dataGridViewClients.SelectedRows[0].Cells[0].Value);
                     try
                     {
-                        service.DelElement(id);
+                        APIClient.PostRequest<SClientBindingModel, bool>("api/SClient/DelElement", new SClientBindingModel { Id = id });
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-MessageBoxIcon.Error);
+                        MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     LoadData();
                 }
@@ -86,5 +78,6 @@ MessageBoxIcon.Error);
         {
             LoadData();
         }
+
     }
 }

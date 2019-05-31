@@ -1,22 +1,19 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using AbstractDishShopServiceDAL.ViewModel;
 using AbstractDishShopServiceDAL.BindingModels;
-using AbstractDishShopServiceDAL.Interfaces;
-using AbstractDishShopServiceDAL.ViewModel;
-using Unity;
+using System;
+using System.Windows.Forms;
+using AbstractDishShopView;
+
 namespace AbstractDishShopView
 {
     public partial class FormClient : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
         public int Id { set { id = value; } }
-        private readonly ISClientService service;
         private int? id;
-        public FormClient(ISClientService service)
+
+        public FormClient()
         {
             InitializeComponent();
-            this.service = service;
         }
         private void FormClient_Load(object sender, EventArgs e)
         {
@@ -24,7 +21,8 @@ namespace AbstractDishShopView
             {
                 try
                 {
-                    SClientViewModel view = service.GetElement(id.Value);
+                    SClientViewModel view = APIClient.GetRequest<SClientViewModel>("api/SClient/Get/" + id.Value);
+                    textBoxFIO.Text = view.SClientFIO;
                     if (view != null)
                     {
                         textBoxFIO.Text = view.SClientFIO;
@@ -32,8 +30,7 @@ namespace AbstractDishShopView
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -49,18 +46,20 @@ namespace AbstractDishShopView
             {
                 if (id.HasValue)
                 {
-                    service.UpdElement(new SClientBindingModel
-                    {
-                        Id = id.Value,
-                        SClientFIO = textBoxFIO.Text
-                    });
+                    APIClient.PostRequest<SClientBindingModel,
+                   bool>("api/SClient/UpdElement", new SClientBindingModel
+                   {
+                       Id = id.Value,
+                       SClientFIO = textBoxFIO.Text
+                   });
                 }
                 else
                 {
-                    service.AddElement(new SClientBindingModel
-                    {
-                        SClientFIO = textBoxFIO.Text
-                    });
+                    APIClient.PostRequest<SClientBindingModel,
+                   bool>("api/SClient/AddElement", new SClientBindingModel
+                   {
+                       SClientFIO = textBoxFIO.Text
+                   });
                 }
                 MessageBox.Show("Сохранение прошло успешно", "Сообщение",
                MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -74,6 +73,7 @@ namespace AbstractDishShopView
             }
         }
         private void buttonCancel_Click(object sender, EventArgs e)
+
         {
             DialogResult = DialogResult.Cancel;
             Close();

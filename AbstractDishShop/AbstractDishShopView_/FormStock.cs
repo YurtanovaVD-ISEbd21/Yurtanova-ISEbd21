@@ -1,23 +1,19 @@
 ﻿using AbstractDishShopServiceDAL.BindingModels;
-using AbstractDishShopServiceDAL.Interfaces;
 using AbstractDishShopServiceDAL.ViewModel;
+using AbstractDishShopView;
 using System;
 using System.Windows.Forms;
-using Unity;
+
 
 namespace AbstractDishShopView_
 {
     public partial class FormStock : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
         public int Id { set { id = value; } }
-        private readonly IStockService service;
         private int? id;
-        public FormStock(IStockService service)
+        public FormStock()
         {
             InitializeComponent();
-            this.service = service;
         }
         private void FormStock_Load(object sender, EventArgs e)
         {
@@ -25,16 +21,16 @@ namespace AbstractDishShopView_
             {
                 try
                 {
-                    StockViewModel view = service.GetElement(id.Value);
+                    StockViewModel view = APIClient.GetRequest<StockViewModel>("api/Stock/Get/" + id.Value);
                     if (view != null)
                     {
-                       
-                    textBoxName.Text = view.StockName;
+                        nameTextBox.Text = view.StockName;
                         dataGridView.DataSource = view.StockMaterialss;
                         dataGridView.Columns[0].Visible = false;
                         dataGridView.Columns[1].Visible = false;
                         dataGridView.Columns[2].Visible = false;
-                        dataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        dataGridView.Columns[3].AutoSizeMode =
+                        DataGridViewAutoSizeColumnMode.Fill;
                     }
                 }
                 catch (Exception ex)
@@ -45,7 +41,7 @@ namespace AbstractDishShopView_
         }
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxName.Text))
+            if (string.IsNullOrEmpty(nameTextBox.Text))
             {
                 MessageBox.Show("Заполните название", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -54,17 +50,17 @@ namespace AbstractDishShopView_
             {
                 if (id.HasValue)
                 {
-                    service.UpdElement(new StockBindingModel
+                    APIClient.PostRequest<StockBindingModel, bool>("api/Stock/UpdElement", new StockBindingModel
                     {
                         Id = id.Value,
-                        StockName = textBoxName.Text
+                        StockName = nameTextBox.Text
                     });
                 }
                 else
                 {
-                    service.AddElement(new StockBindingModel
+                    APIClient.PostRequest<StockBindingModel, bool>("api/Stock/AddElement", new StockBindingModel
                     {
-                        StockName = textBoxName.Text
+                        StockName = nameTextBox.Text
                     });
                 }
                 MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);

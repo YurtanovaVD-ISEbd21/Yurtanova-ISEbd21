@@ -106,7 +106,7 @@ namespace AbstractDishShopView
             }
             try
             {
-                serviceM.CreateOrder(new SOrderBindingModel
+                serviceM.CreateSOrder(new SOrderBindingModel
                 {
                     SClientId = Convert.ToInt32(comboBoxClient.SelectedValue),
                     DishId = Convert.ToInt32(comboBoxDish.SelectedValue),

@@ -1,6 +1,7 @@
 ﻿using AbstractDishShopServiceDAL.BindingModels;
 using AbstractDishShopServiceDAL.Interfaces;
 using AbstractDishShopServiceDAL.ViewModel;
+using AbstractDishShopView_;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,7 +75,7 @@ namespace AbstractDishShopView
                 int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 try
                 {
-                    service.TakeOrderInWork(new SOrderBindingModel { Id = id });
+                    service.TakeSOrderInWork(new SOrderBindingModel { Id = id });
                     LoadData();
                 }
                 catch (Exception ex)
@@ -91,7 +92,7 @@ namespace AbstractDishShopView
                 int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 try
                 {
-                    service.FinishOrder(new SOrderBindingModel { Id = id });
+                    service.FinishSOrder(new SOrderBindingModel { Id = id });
                     LoadData();
                 }
                 catch (Exception ex)
@@ -108,7 +109,7 @@ namespace AbstractDishShopView
                 int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 try
                 {
-                    service.PayOrder(new SOrderBindingModel { Id = id });
+                    service.PaySOrder(new SOrderBindingModel { Id = id });
                     LoadData();
                 }
                 catch (Exception ex)
@@ -126,6 +127,18 @@ namespace AbstractDishShopView
         private void FormMain_Load(object sender, EventArgs e)
         {
             LoadData();
+        }
+
+        private void складыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormStocks>();
+            form.ShowDialog();
+        }
+
+        private void пополнитьСкладToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormPutOnStock>();
+            form.ShowDialog();
         }
     }
 }

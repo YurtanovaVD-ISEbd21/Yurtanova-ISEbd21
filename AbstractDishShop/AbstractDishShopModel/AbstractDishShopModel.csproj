@@ -48,6 +48,8 @@
     <Compile Include="SClient.cs" />
     <Compile Include="SOrder.cs" />
     <Compile Include="SOrderStatus.cs" />
+    <Compile Include="Stock.cs" />
+    <Compile Include="StockMaterials.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

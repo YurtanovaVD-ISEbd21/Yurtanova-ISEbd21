@@ -29,7 +29,7 @@ namespace AbstractDishShopView_
                 List<StockViewModel> listS = APIClient.GetRequest<List<StockViewModel>>("api/Stock/GetList");
                 if (listS != null)
                 {
-                    comboBoxStocks.DisplayMember = "StockName";
+                    comboBoxStocks.DisplayMember = "SStockName";
                     comboBoxStocks.ValueMember = "Id";
                     comboBoxStocks.DataSource = listS;
                     comboBoxStocks.SelectedItem = null;

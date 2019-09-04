@@ -127,6 +127,12 @@
     <Compile Include="FormDishs.Designer.cs">
       <DependentUpon>FormDishs.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormImplementer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormImplementer.Designer.cs">
+      <DependentUpon>FormImplementer.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,6 +156,12 @@
     </Compile>
     <Compile Include="FormPutOnStock.Designer.cs">
       <DependentUpon>FormPutOnStock.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormImplementers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormImplementers.Designer.cs">
+      <DependentUpon>FormImplementers.cs</DependentUpon>
     </Compile>
     <Compile Include="FormStock.cs">
       <SubType>Form</SubType>
@@ -207,6 +219,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractDishShopRestApi\AbstractDishShopRestApi.csproj">
+      <Project>{54D8D829-6E17-453B-B5EF-E4B9CC53F019}</Project>
+      <Name>AbstractDishShopRestApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AbstractDishShopServiceDAL\AbstractDishShopServiceDAL.csproj">
       <Project>{2A03C236-3E71-46EB-AC6B-8B4DEED6AADF}</Project>
       <Name>AbstractDishShopServiceDAL</Name>

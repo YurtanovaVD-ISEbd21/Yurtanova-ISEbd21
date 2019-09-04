@@ -68,9 +68,25 @@
     <Compile Include="Migrations\201903291943147_FirstMigration.Designer.cs">
       <DependentUpon>201903291943147_FirstMigration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905310948330_NewMigr.cs" />
-    <Compile Include="Migrations\201905310948330_NewMigr.Designer.cs">
-      <DependentUpon>201905310948330_NewMigr.cs</DependentUpon>
+    <Compile Include="Migrations\201905301754503_NewMigr.cs" />
+    <Compile Include="Migrations\201905301754503_NewMigr.Designer.cs">
+      <DependentUpon>201905301754503_NewMigr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905311002166_NewMigr1.cs" />
+    <Compile Include="Migrations\201905311002166_NewMigr1.Designer.cs">
+      <DependentUpon>201905311002166_NewMigr1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905311020427_NewMigr2.cs" />
+    <Compile Include="Migrations\201905311020427_NewMigr2.Designer.cs">
+      <DependentUpon>201905311020427_NewMigr2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905311136120_NewMigr3.cs" />
+    <Compile Include="Migrations\201905311136120_NewMigr3.Designer.cs">
+      <DependentUpon>201905311136120_NewMigr3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905311243435_NewMigr4.cs" />
+    <Compile Include="Migrations\201905311243435_NewMigr4.Designer.cs">
+      <DependentUpon>201905311243435_NewMigr4.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +97,7 @@
     </Compile>
     <Compile Include="ReportServiceDB.cs" />
     <Compile Include="SClientServiceDB.cs" />
+    <Compile Include="SImplementerServiceDB.cs" />
     <Compile Include="StockServiceDB.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +121,20 @@
     <EmbeddedResource Include="Migrations\201903291943147_FirstMigration.resx">
       <DependentUpon>201903291943147_FirstMigration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201905310948330_NewMigr.resx">
-      <DependentUpon>201905310948330_NewMigr.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905301754503_NewMigr.resx">
+      <DependentUpon>201905301754503_NewMigr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905311002166_NewMigr1.resx">
+      <DependentUpon>201905311002166_NewMigr1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905311020427_NewMigr2.resx">
+      <DependentUpon>201905311020427_NewMigr2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905311136120_NewMigr3.resx">
+      <DependentUpon>201905311136120_NewMigr3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905311243435_NewMigr4.resx">
+      <DependentUpon>201905311243435_NewMigr4.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -50,6 +50,7 @@ public static void RegisterTypes(IUnityContainer container)
             container.RegisterType<IStockService, StockServiceBD>(new HierarchicalLifetimeManager());
             container.RegisterType<IMainService, MainServiceDB>(new HierarchicalLifetimeManager());
             container.RegisterType<IReportService, ReportServiceDB>(new HierarchicalLifetimeManager());
+            container.RegisterType<IImplementerService, ImplementerServiceDB>(new HierarchicalLifetimeManager());
         }
     }
 }

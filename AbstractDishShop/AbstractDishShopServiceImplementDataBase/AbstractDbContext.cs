@@ -1,10 +1,5 @@
 ﻿using AbstractDishShopModel;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AbstractDishShopServiceImplementDataBase
 {
@@ -20,6 +15,7 @@ namespace AbstractDishShopServiceImplementDataBase
         }
         public virtual DbSet<SClient> SClients { get; set; }
         public virtual DbSet<Materials> Materialss { get; set; }
+        public virtual DbSet<Implementer> Implementers { get; set; }
         public virtual DbSet<SOrder> SOrders { get; set; }
         public virtual DbSet<Dish> Dishs { get; set; }
         public virtual DbSet<DishMaterials> DishMaterialss { get; set; }

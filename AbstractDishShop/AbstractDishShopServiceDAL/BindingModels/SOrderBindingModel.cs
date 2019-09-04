@@ -17,6 +17,8 @@ namespace AbstractDishShopServiceDAL.BindingModels
         [DataMember]
         public int DishId { get; set; }
         [DataMember]
+        public int? ImplementerId { get; set; }
+        [DataMember]
         public int Count { get; set; }
         [DataMember]
         public decimal Sum { get; set; }

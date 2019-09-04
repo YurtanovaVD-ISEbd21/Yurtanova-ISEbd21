@@ -24,6 +24,10 @@ namespace AbstractDishShopServiceDAL.ViewModel
         [DisplayName("Блюдо")]
         public string DishName { get; set; }
         [DataMember]
+        public int? ImplementerId { get; set; }
+        [DataMember]
+        public string ImplementerName { get; set; }
+        [DataMember]
         [DisplayName("Количество")]
         public int Count { get; set; }
         [DataMember]

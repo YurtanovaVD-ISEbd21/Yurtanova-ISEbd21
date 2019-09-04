@@ -46,7 +46,7 @@ namespace AbstractDishShopView
             var form = new FormMaterials();
             form.ShowDialog();
         }
-        private void БлюдаToolStripMenuItem_Click(object sender, EventArgs e)
+        private void подаркиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var form = new FormDishs();
             form.ShowDialog();
@@ -124,7 +124,7 @@ namespace AbstractDishShopView
             LoadData();
         }
 
-        private void прайсподарковToolStripMenuItem_Click(object sender, EventArgs e)
+        private void прайсблюдToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog
             {
@@ -134,7 +134,7 @@ namespace AbstractDishShopView
             {
                 try
                 {
-                    APIClient.PostRequest<ReportBindingModel, bool>("api/SReport/SaveDishPrice", new ReportBindingModel
+                    APIClient.PostRequest<ReportBindingModel, bool>("api/Edition/SaveItemPrice", new ReportBindingModel
                     {
                         FileName = sfd.FileName
                     });
@@ -156,7 +156,23 @@ namespace AbstractDishShopView
             var form = new FormClientOrders();
             form.ShowDialog();
         }
-
+        private void исполнителиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new FormImplementers();
+            form.ShowDialog();
+        }
+        private void запускработToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                APIClient.PostRequest<int?, bool>("api/SMain/StartWork", null);
+                MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
     }
 }

@@ -35,6 +35,7 @@ namespace AbstractDishShopServiceImplementList.Implementations
             .ToList();
             return result;
         }
+        
         public void CreateSOrder(SOrderBindingModel model)
         {
             int maxId = source.Orders.Count > 0 ? source.Orders.Max(rec => rec.Id) : 0;
@@ -144,6 +145,9 @@ namespace AbstractDishShopServiceImplementList.Implementations
             }
         }
 
-        
+        public List<SOrderViewModel> GetFreeSOrders()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

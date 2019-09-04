@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AbstractDishShopServiceImplementDataBase.Implementations
 {
@@ -18,6 +16,17 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
         public MainServiceDB(AbstractDbContext context)
         {
             this.context = context;
+        }
+        public List<SOrderViewModel> GetFreeOrders()
+        {
+            List<SOrderViewModel> result = context.SOrders
+            .Where(x => x.Status == SOrderStatus.Принят || x.Status == SOrderStatus.НедостаточноРесурсов)
+            .Select(rec => new SOrderViewModel
+            {
+                Id = rec.Id
+            })
+            .ToList();
+            return result;
         }
         public List<SOrderViewModel> GetList()
         {
@@ -37,7 +46,8 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
                 Count = rec.Count,
                 Sum = rec.Sum,
                 SClientFIO = rec.SClient.SClientFIO,
-                DishName = rec.Dish.DishName
+                DishName = rec.Dish.DishName,
+                ImplementerName = rec.Implementer.ImplementerName
             })
             .ToList();
             return result;
@@ -101,6 +111,7 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
                     }
                     element.DateImplement = DateTime.Now;
                     element.Status = SOrderStatus.Выполняется;
+                    element.ImplementerId = model.ImplementerId; 
                     context.SaveChanges();
                     transaction.Commit();
                 }
@@ -139,6 +150,18 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
             }
             element.Status = SOrderStatus.Оплачен;
             context.SaveChanges();
+        }
+        public List<SOrderViewModel> GetFreeSOrders()
+        {
+            List<SOrderViewModel> result = context.SOrders
+            .Where(x => x.Status == SOrderStatus.Принят || x.Status ==
+           SOrderStatus.НедостаточноРесурсов)
+            .Select(rec => new SOrderViewModel
+            {
+                Id = rec.Id
+            })
+            .ToList();
+            return result;
         }
         public void PutMaterialsOnStock(StockMaterialsBindingModel model)
         {

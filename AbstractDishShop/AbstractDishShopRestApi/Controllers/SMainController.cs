@@ -1,6 +1,9 @@
-﻿using AbstractDishShopServiceDAL.BindingModels;
+﻿using AbstractDishShopRestApi.Services;
+using AbstractDishShopServiceDAL.BindingModels;
 using AbstractDishShopServiceDAL.Interfaces;
+using AbstractDishShopServiceDAL.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace AbstractDishShopRestApi.Controllers
@@ -8,9 +11,12 @@ namespace AbstractDishShopRestApi.Controllers
     public class SMainController : ApiController
     {
         private readonly IMainService _service;
-        public SMainController(IMainService service)
+        private readonly IImplementerService _serviceImplementer;
+        public SMainController(IMainService service, IImplementerService
+       serviceImplementer)
         {
             _service = service;
+            _serviceImplementer = serviceImplementer;
         }
         [HttpGet]
         public IHttpActionResult GetList()
@@ -23,23 +29,12 @@ namespace AbstractDishShopRestApi.Controllers
             return Ok(list);
         }
         [HttpPost]
-        public void CreateOrder(SOrderBindingModel model)
+        public void CreateSOrder(SOrderBindingModel model)
         {
             _service.CreateSOrder(model);
         }
         [HttpPost]
-        public void TakeOrderInWork(SOrderBindingModel model)
-        {
-            _service.TakeSOrderInWork(model);
-        }
-        [HttpPost]
-
-        public void FinishOrder(SOrderBindingModel model)
-        {
-            _service.FinishSOrder(model);
-        }
-        [HttpPost]
-        public void PayOrder(SOrderBindingModel model)
+        public void PaySOrder(SOrderBindingModel model)
         {
             _service.PaySOrder(model);
         }
@@ -47,6 +42,20 @@ namespace AbstractDishShopRestApi.Controllers
         public void PutMaterialsOnStock(StockMaterialsBindingModel model)
         {
             _service.PutMaterialsOnStock(model);
+        }
+        [HttpPost]
+        public void StartWork()
+        {
+            List<SOrderViewModel> orders = _service.GetFreeSOrders();
+            foreach (var order in orders)
+            {
+                ImplementerViewModel impl = _serviceImplementer.GetFreeImplementer();
+                if (impl == null)
+                {
+                    throw new Exception("Нет сотрудников");
+                }
+                new WorkSImplementer(_service, _serviceImplementer, impl.Id, order.Id);
+            }
         }
     }
 }

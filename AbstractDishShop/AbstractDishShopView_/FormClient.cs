@@ -21,7 +21,7 @@ namespace AbstractDishShopView
             {
                 try
                 {
-                    SClientViewModel view = APIClient.GetRequest<SClientViewModel>("api/SClient/Get/" + id.Value);
+                    SClientViewModel view = APIClient.GetRequest<SClientViewModel>("api/Client/Get/" + id.Value);
                     textBoxFIO.Text = view.SClientFIO;
                     if (view != null)
                     {
@@ -47,7 +47,7 @@ namespace AbstractDishShopView
                 if (id.HasValue)
                 {
                     APIClient.PostRequest<SClientBindingModel,
-                   bool>("api/SClient/UpdElement", new SClientBindingModel
+                   bool>("api/Client/UpdElement", new SClientBindingModel
                    {
                        Id = id.Value,
                        SClientFIO = textBoxFIO.Text
@@ -56,7 +56,7 @@ namespace AbstractDishShopView
                 else
                 {
                     APIClient.PostRequest<SClientBindingModel,
-                   bool>("api/SClient/AddElement", new SClientBindingModel
+                   bool>("api/Client/AddElement", new SClientBindingModel
                    {
                        SClientFIO = textBoxFIO.Text
                    });

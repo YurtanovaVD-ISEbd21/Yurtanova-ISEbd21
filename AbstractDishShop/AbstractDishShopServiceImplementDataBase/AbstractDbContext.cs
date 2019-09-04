@@ -21,6 +21,7 @@ namespace AbstractDishShopServiceImplementDataBase
         public virtual DbSet<DishMaterials> DishMaterialss { get; set; }
         public virtual DbSet<Stock> Stocks { get; set; }
         public virtual DbSet<StockMaterials> StockMaterialss { get; set; }
+        public virtual DbSet<MessageInfo> MessageInfos { get; set; }
     }
 
 }

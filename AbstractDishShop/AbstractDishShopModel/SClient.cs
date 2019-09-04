@@ -16,8 +16,11 @@ namespace AbstractDishShopModel
         public int Id { get; set; }
         [Required]
         public string SClientFIO { get; set; }
+        public string Mail { get; set; }
         [ForeignKey("SClientId")]
         public virtual List<SOrder> SOrders { get; set; }
+        [ForeignKey("ClientId")]
+        public virtual List<MessageInfo> MessageInfos { get; set; }
     }
 }
 

@@ -4,9 +4,12 @@ using AbstractDishShopServiceDAL.Interfaces;
 using AbstractDishShopServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
-using System.Data.Entity;
+using System.Net;
+using System.Net.Mail;
 
 namespace AbstractDishShopServiceImplementDataBase.Implementations
 {
@@ -17,17 +20,6 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
         {
             this.context = context;
         }
-        public List<SOrderViewModel> GetFreeOrders()
-        {
-            List<SOrderViewModel> result = context.SOrders
-            .Where(x => x.Status == SOrderStatus.Принят || x.Status == SOrderStatus.НедостаточноРесурсов)
-            .Select(rec => new SOrderViewModel
-            {
-                Id = rec.Id
-            })
-            .ToList();
-            return result;
-        }
         public List<SOrderViewModel> GetList()
         {
             List<SOrderViewModel> result = context.SOrders.Select(rec => new SOrderViewModel
@@ -35,6 +27,7 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
                 Id = rec.Id,
                 SClientId = rec.SClientId,
                 DishId = rec.DishId,
+                ImplementerId = rec.ImplementerId,
                 DateCreate = SqlFunctions.DateName("dd", rec.DateCreate) + " " +
             SqlFunctions.DateName("mm", rec.DateCreate) + " " +
             SqlFunctions.DateName("yyyy", rec.DateCreate),
@@ -52,9 +45,20 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
             .ToList();
             return result;
         }
+        public List<SOrderViewModel> GetFreeSOrders()
+        {
+            List<SOrderViewModel> result = context.SOrders
+            .Where(x => x.Status == SOrderStatus.Принят || x.Status == SOrderStatus.НедостаточноРесурсов)
+            .Select(rec => new SOrderViewModel
+            {
+                Id = rec.Id
+            })
+            .ToList();
+            return result;
+        }
         public void CreateSOrder(SOrderBindingModel model)
         {
-            context.SOrders.Add(new SOrder
+            var SOrder = new SOrder
             {
                 SClientId = model.SClientId,
                 DishId = model.DishId,
@@ -62,62 +66,70 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
                 Count = model.Count,
                 Sum = model.Sum,
                 Status = SOrderStatus.Принят
-            });
+            };
+            
+        context.SOrders.Add(SOrder);
             context.SaveChanges();
+            var SClient = context.SClients.FirstOrDefault(x => x.Id == model.SClientId);
+            SendEmail(SClient.Mail, "Оповещение по заказам", string.Format("Заказ №{0} от {1} создан успешно", SOrder.Id, SOrder.DateCreate.ToShortDateString()));
         }
         public void TakeSOrderInWork(SOrderBindingModel model)
         {
-            
-        using (var transaction = context.Database.BeginTransaction())
+            using (var transaction = context.Database.BeginTransaction())
             {
+                SOrder element = context.SOrders.FirstOrDefault(rec => rec.Id == model.Id);
                 try
                 {
-                    SOrder element = context.SOrders.FirstOrDefault(rec => rec.Id == model.Id);
                     if (element == null)
                     {
                         throw new Exception("Элемент не найден");
                     }
-                    if (element.Status != SOrderStatus.Принят)
+                    if (element.Status != SOrderStatus.Принят && element.Status != SOrderStatus.НедостаточноРесурсов)
                     {
                         throw new Exception("Заказ не в статусе \"Принят\"");
                     }
-                    var dishMaterialss = context.DishMaterialss.Include(rec => rec.Materials).Where(rec => rec.DishId == element.DishId);
+                    var DishMaterials = context.DishMaterialss.Include(rec => rec.Materials).Where(rec => rec.DishId == element.DishId);
                     // списываем
-                    foreach (var DishMaterials in dishMaterialss)
+                    foreach (var DishMaterial in DishMaterials)
                     {
-                        int countOnStocks = DishMaterials.Count * element.Count;
-                        var stockMaterialss = context.StockMaterialss.Where(rec => rec.MaterialsId == DishMaterials.MaterialsId);
-                        foreach (var stockMaterials in stockMaterialss)
+                        int countOnStocks = DishMaterial.Count * element.Count;
+                        var stockMaterials = context.StockMaterialss.Where(rec => rec.MaterialsId == DishMaterial.MaterialsId);
+                        foreach (var stockMaterial in stockMaterials)
                         {
                             // компонентов на одном слкаде может не хватать
-                            if (stockMaterials.Count >= countOnStocks)
+                            if (stockMaterial.Count >= countOnStocks)
                             {
-                                stockMaterials.Count -= countOnStocks;
+                                stockMaterial.Count -= countOnStocks;
                                 countOnStocks = 0;
                                 context.SaveChanges();
                                 break;
                             }
                             else
                             {
-                                countOnStocks -= stockMaterials.Count;
-                                stockMaterials.Count = 0;
+                                countOnStocks -= stockMaterial.Count;
+                                stockMaterial.Count = 0;
                                 context.SaveChanges();
                             }
                         }
                         if (countOnStocks > 0)
                         {
-                            throw new Exception("Не достаточно компонента " + DishMaterials.Materials.MaterialsName + " требуется " + DishMaterials.Count + ", не хватает " + countOnStocks);
+                            throw new Exception("Не достаточно компонента " + DishMaterial.Materials.MaterialsName + " требуется " + DishMaterial.Count + ", не хватает " + countOnStocks);
                         }
                     }
+                    element.ImplementerId = model.ImplementerId;
                     element.DateImplement = DateTime.Now;
                     element.Status = SOrderStatus.Выполняется;
-                    element.ImplementerId = model.ImplementerId; 
                     context.SaveChanges();
+                    SendEmail(element.SClient.Mail, "Оповещение по заказам", string.Format("Заказ №{0} от {1} передеан в работу", element.Id, element.DateCreate.ToShortDateString()));
                     transaction.Commit();
+                    
                 }
                 catch (Exception)
                 {
                     transaction.Rollback();
+                    element.Status = SOrderStatus.НедостаточноРесурсов;
+                    context.SaveChanges();
+                    transaction.Commit();
                     throw;
                 }
             }
@@ -126,8 +138,7 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
         {
             SOrder element = context.SOrders.FirstOrDefault(rec => rec.Id == model.Id);
             if (element == null)
-               
-        {
+            {
                 throw new Exception("Элемент не найден");
             }
             if (element.Status != SOrderStatus.Выполняется)
@@ -136,6 +147,7 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
             }
             element.Status = SOrderStatus.Готов;
             context.SaveChanges();
+            SendEmail(element.SClient.Mail, "Оповещение по заказам", string.Format("Заказ №{0} от {1} передан на оплату", element.Id, element.DateCreate.ToShortDateString()));
         }
         public void PaySOrder(SOrderBindingModel model)
         {
@@ -150,18 +162,7 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
             }
             element.Status = SOrderStatus.Оплачен;
             context.SaveChanges();
-        }
-        public List<SOrderViewModel> GetFreeSOrders()
-        {
-            List<SOrderViewModel> result = context.SOrders
-            .Where(x => x.Status == SOrderStatus.Принят || x.Status ==
-           SOrderStatus.НедостаточноРесурсов)
-            .Select(rec => new SOrderViewModel
-            {
-                Id = rec.Id
-            })
-            .ToList();
-            return result;
+            SendEmail(element.SClient.Mail, "Оповещение по заказам", string.Format("Заказ №{0} от {1} оплачен успешно", element.Id, element.DateCreate.ToShortDateString()));
         }
         public void PutMaterialsOnStock(StockMaterialsBindingModel model)
         {
@@ -180,6 +181,38 @@ namespace AbstractDishShopServiceImplementDataBase.Implementations
                 });
             }
             context.SaveChanges();
+            
         }
+        private void SendEmail(string mailAddress, string subject, string text)
+        {
+            MailMessage objMailMessage = new MailMessage();
+            SmtpClient objSmtpSClient = null;
+            try
+            {
+                objMailMessage.From = new MailAddress(ConfigurationManager.AppSettings["MailLogin"]);
+                objMailMessage.To.Add(new MailAddress(mailAddress));
+                objMailMessage.Subject = subject;
+                objMailMessage.Body = text;
+                objMailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
+                objMailMessage.BodyEncoding = System.Text.Encoding.UTF8;
+                objSmtpSClient = new SmtpClient("smtp.gmail.com", 587);
+                objSmtpSClient.UseDefaultCredentials = false;
+                objSmtpSClient.EnableSsl = true;
+                objSmtpSClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                objSmtpSClient.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["MailLogin"], ConfigurationManager.AppSettings["MailPassword"]);
+                objSmtpSClient.Send(objMailMessage);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                objMailMessage = null;
+                objSmtpSClient = null;
+            }
+        }
+
+        
     }
 }

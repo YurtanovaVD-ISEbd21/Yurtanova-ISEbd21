@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AbstractDishShopServiceImplementList.Implementations
 {
-    public class SClientServiceList : ISClientService
+    public class SClientServiceList : IClientService
     {
         private DataListSingleton source;
         public SClientServiceList()

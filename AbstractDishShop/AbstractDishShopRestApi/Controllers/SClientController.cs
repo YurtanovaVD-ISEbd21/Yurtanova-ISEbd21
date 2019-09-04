@@ -7,8 +7,8 @@ namespace AbstractDishShopRestApi.Controllers
 {
     public class SClientController : ApiController
     {
-        private readonly ISClientService _service;
-        public SClientController(ISClientService service)
+        private readonly IClientService _service;
+        public SClientController(IClientService service)
         {
             _service = service;
         }

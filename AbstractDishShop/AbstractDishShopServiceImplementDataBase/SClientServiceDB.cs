@@ -9,7 +9,7 @@ using System.Linq;
 namespace AbstractDishShopServiceImplementDataBase.Implementations
 {
 
-    public class SClientServiceDB : ISClientService
+    public class SClientServiceDB : IClientService
     {
         private AbstractDbContext context;
         public SClientServiceDB(AbstractDbContext context)

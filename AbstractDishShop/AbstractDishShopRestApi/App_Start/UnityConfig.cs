@@ -44,7 +44,7 @@ public static void RegisterTypes(IUnityContainer container)
             // TODO: Register your type's mappings here.
             // container.RegisterType<IProductRepository, ProductRepository>();
             container.RegisterType<DbContext, AbstractDbContext>(new HierarchicalLifetimeManager());
-            container.RegisterType<ISClientService, SClientServiceDB>(new HierarchicalLifetimeManager());
+            container.RegisterType<IClientService, SClientServiceDB>(new HierarchicalLifetimeManager());
             container.RegisterType<IMaterialsService, MaterialsServiceBD>(new HierarchicalLifetimeManager());
             container.RegisterType<IDishService, DishServiceDB>(new HierarchicalLifetimeManager());
             container.RegisterType<IStockService, StockServiceBD>(new HierarchicalLifetimeManager());

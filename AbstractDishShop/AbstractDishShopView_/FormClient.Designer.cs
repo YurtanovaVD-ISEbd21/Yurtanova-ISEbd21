@@ -1,4 +1,5 @@
 ﻿namespace AbstractDishShopView
+
 {
     partial class FormClient
     {
@@ -32,6 +33,12 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.textBoxFIO = new System.Windows.Forms.TextBox();
+            this.textBoxMail = new System.Windows.Forms.TextBox();
+            this.Label2 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -45,7 +52,7 @@
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(74, 43);
+            this.buttonSave.Location = new System.Drawing.Point(543, 378);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(75, 23);
             this.buttonSave.TabIndex = 1;
@@ -55,7 +62,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(155, 43);
+            this.buttonCancel.Location = new System.Drawing.Point(624, 378);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -70,11 +77,51 @@
             this.textBoxFIO.Size = new System.Drawing.Size(217, 20);
             this.textBoxFIO.TabIndex = 3;
             // 
+            // textBoxMail
+            // 
+            this.textBoxMail.Location = new System.Drawing.Point(370, 17);
+            this.textBoxMail.Name = "textBoxMail";
+            this.textBoxMail.Size = new System.Drawing.Size(217, 20);
+            this.textBoxMail.TabIndex = 5;
+            // 
+            // Label2
+            // 
+            this.Label2.AutoSize = true;
+            this.Label2.Location = new System.Drawing.Point(327, 20);
+            this.Label2.Name = "Label2";
+            this.Label2.Size = new System.Drawing.Size(37, 13);
+            this.Label2.TabIndex = 4;
+            this.Label2.Text = "Почта";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.dataGridView);
+            this.groupBox1.Location = new System.Drawing.Point(33, 43);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(651, 329);
+            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Письма";
+            // 
+            // dataGridView
+            // 
+            this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.AllowUserToDeleteRows = false;
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Location = new System.Drawing.Point(6, 19);
+            this.dataGridView.Name = "dataGridView";
+            this.dataGridView.ReadOnly = true;
+            this.dataGridView.Size = new System.Drawing.Size(639, 310);
+            this.dataGridView.TabIndex = 5;
+            // 
             // FormClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(305, 80);
+            this.ClientSize = new System.Drawing.Size(711, 413);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.textBoxMail);
+            this.Controls.Add(this.Label2);
             this.Controls.Add(this.textBoxFIO);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
@@ -82,6 +129,8 @@
             this.Name = "FormClient";
             this.Text = "Клиент";
             this.Load += new System.EventHandler(this.FormClient_Load);
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -93,5 +142,9 @@
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.TextBox textBoxFIO;
+        private System.Windows.Forms.TextBox textBoxMail;
+        private System.Windows.Forms.Label Label2;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.DataGridView dataGridView;
     }
 }

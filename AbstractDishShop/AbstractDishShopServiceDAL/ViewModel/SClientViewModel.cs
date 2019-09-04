@@ -14,7 +14,11 @@ namespace AbstractDishShopServiceDAL.ViewModel
         [DataMember]
         public int Id { get; set; }
         [DataMember]
+        public string Mail { get; set; }
+        [DataMember]
         [DisplayName("ФИО Клиента")]
         public string SClientFIO { get; set; }
+        [DataMember]
+        public List<MessageInfoViewModel> Messages { get; set; }
     }
 }
